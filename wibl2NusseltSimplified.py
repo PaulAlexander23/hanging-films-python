@@ -41,8 +41,7 @@ def wibl2NusseltSimplified(x, y, z, t, h, F1, F2, theta, Re, C):
             + diff(F1, z, 2) 
             + Integer(7)/Integer(2) * diff(F2, x, z)) 
             - Integer(5)/Integer(6) * cot(theta) * h * diff(h, x) 
-            + Integer(5)/Integer(6) * h * diff(laph, x) / C)/(1 
-            - 3 * Re/Integer(70) * F1 * diff(h, x))) / 3 / Re
+            + Integer(5)/Integer(6) * h * diff(laph, x) / C)) / 3 / Re
 
     eqn2 = (- 3 * Re * diff(F2, t) 
             + 3 * Re * ( Integer(9)/Integer(7) * F2**2/h**2 * diff(h, z) 
