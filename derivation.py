@@ -42,8 +42,8 @@ def wibl2TwoDimensionalOurEquations():
 
     sol = [solution[0][n].expand() for n in range(3)]
 
-#    for n in range(3):
-#        sol[n] = (sol[n].coeff(e, 0) + e * sol[n].coeff(e, 1) + e**2 * sol[n].coeff(e, 2)) + e**3 * sol[n].coeff(e, 3))
+    #    for n in range(3):
+    #        sol[n] = (sol[n].coeff(e, 0) + e * sol[n].coeff(e, 1) + e**2 * sol[n].coeff(e, 2)) + e**3 * sol[n].coeff(e, 3))
 
     f = open("wibl2FullOurEqns.tex","w+")
     for n in range(3):

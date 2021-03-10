@@ -35,7 +35,7 @@ def wibl2TwoDimensionalFallingLiquidFilms():
     # From falling liquid films
     xMomentumEquation = (
             epsilon * delta * (diff(u, t) + u * diff(u, x) + v * diff(u, y)) - Integer(2) * epsilon**2 * eta * diff(u, x, 2)
-            - Integer(1) - epsilon**2 * eta * diff(diff(u, x).subs(y, h), x) + epsilon * zeta * diff(h, x) - epsilon**3 * diff(h, x, 3) 
+            - Integer(1) - epsilon**2 * eta * diff(diff(u, x).subs(y, h), x) + epsilon * zeta * diff(h, x) - diff(h, x, 3) 
             ).subs(diff(h, t), - diff(q, x))
 
     # Treat the uyy term as special
@@ -48,7 +48,11 @@ def wibl2TwoDimensionalFallingLiquidFilms():
 
     solution = list(linsolve([eqn0, eqn1, eqn2], (diff(q, t), diff(r, t), diff(s, t))))
 
-    sol = [collect(solution[0][n].expand(), epsilon) for n in range(3)]
+    #sol = [series(solution[0][0].expand(), epsilon, 0, 2), 
+    #       series(solution[0][1].expand(), epsilon, 0, 1),
+    #       series(solution[0][2].expand(), epsilon, 0, 1)]
+    truncation = [2, 1, 1]
+    sol = [series(solution[0][n].expand(), epsilon, 0, truncation[n]) for n in range(3)]
 
 #    for n in range(3):
 #        sol[n] = (sol[n].coeff(e, 0) + epsilon * sol[n].coeff(e, 1) + epsilon**2 * sol[n].coeff(e, 2)) + epsilon**3 * sol[n].coeff(e, 3))

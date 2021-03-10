@@ -7,9 +7,10 @@ def main():
     wibl1()
 
 def wibl1():
-    x, y, z, t = setupIndependantVariables()
+    x, y, z, t = symbols("x y z t")
     h, a, F1 = setupDependantVariables(x, y, z, t)
-    theta, Re, C = setupParameters()
+    theta, Re, C = symbols("theta Re C")
+    epsilon = symbols("epsilon")
 
     hxx = diff(h, x, 2)
     hzz = diff(h, z, 2)
@@ -23,8 +24,8 @@ def wibl1():
     vy = - diff(u0, x) - 0 * diff(w1, z)
     v = integrate(vy, y)
     
-    xMomentumEquation = (Re * (diff(u0, t) + u0 * diff(u0, x) + v * diff(u0, y) + 0 * w1 * diff(u0, z))
-            - Integer(2) * cot(theta) * diff(h, x)
+    xMomentumEquation = (epsilon * Re * (diff(u0, t) + u0 * diff(u0, x) + v * diff(u0, y) + 0 * w1 * diff(u0, z))
+            - Integer(2) * epsilon * cot(theta) * diff(h, x)
             - C**-1 * (diff(hxx, x) + diff(hxx, z))
             - diff(u, y, 2)
             - Integer(2))
@@ -35,9 +36,26 @@ def wibl1():
 
     aSolution = list(linsolve(myeqns[1:5], (a[1:5])))
    
+    #myeqn1 = coefficientDict[(0,)].subs(a[1], aSolution[0][0]) * h**2
+    #pprint(expand(myeqn1))
+    #print()
+    #myeqn2 = F1 - integrate(u.subs([(a[j+1], aSolution[0][j]) for j in range(4)]),y).subs(y, h)
+    #pprint(expand(myeqn2))
+    #print()
+    #myeqn3 = myeqn1 + Integer(3) / h * myeqn2
+    #pprint(expand(myeqn3))
+    #print()
+    #myeqn4 = expand(simplify(myeqn3.subs(a[0], 3 * F1 / h)).subs(diff(h, t), -diff(F1, x)))
+
     myeqn1 = coefficientDict[(0,)].subs(a[1], aSolution[0][0]) * h**2
-    myeqn2 = F1 - integrate(u.subs([(a[j+1], aSolution[0][j]) for j in range(4)]),y).subs(y, h)
-    myeqn3 = myeqn1 + Integer(3) / h * myeqn2
+    pprint(expand(myeqn1))
+    print()
+    myeqn2 = Integer(3) / h * (F1 - integrate(u.subs([(a[j+1], aSolution[0][j]) for j in range(4)]),y).subs(y, h))
+    pprint(expand(myeqn2))
+    print()
+    myeqn3 = myeqn1 + myeqn2
+    pprint(expand(myeqn3))
+    print()
     myeqn4 = expand(simplify(myeqn3.subs(a[0], 3 * F1 / h)).subs(diff(h, t), -diff(F1, x)))
 
     f = open("wibl1.txt", "w+")
@@ -48,13 +66,8 @@ def wibl1():
     f.write(latex(myeqn4))
     print()
 
-    pprint(latex(expand(myeqn4)))
+    pprint(expand(myeqn4))
     print()
-
-
-def setupIndependantVariables():
-    x, y, z, t = symbols("x y z t")
-    return x, y, z, t
 
 
 def setupDependantVariables(x, y, z, t):
@@ -64,11 +77,6 @@ def setupDependantVariables(x, y, z, t):
     #a = [Function("a"+str(j))(x, z, t) for j in range(5)]
     F1 = Function("F_1")(x, y, z, t)
     return h, a, F1
-
-
-def setupParameters():
-    theta, Re, C = symbols("theta Re C")
-    return theta, Re, C
 
 
 if __name__=="__main__":

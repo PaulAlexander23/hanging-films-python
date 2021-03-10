@@ -38,14 +38,13 @@ def main():
         (F1tilde, F1hat * exp(I * (a * x - omega * t)))])
             / exp(I * (a * x - omega * t))).doit().expand()).expand()
 
-        
-    f = open('linearised-wibl1-latex.tex', 'w')
+    f = open('linearised-rivulet-wibl1-stf-latex.tex', 'w')
     for n in range(numberOfEquations):
         f.write(latex(eqns[n]))
         f.write("\n")
     f.close()
 
-    f = open('linearised-wibl1.txt', 'w')
+    f = open('linearised-rivulet-wibl1-stf.txt', 'w')
     for n in range(numberOfEquations):
         f.write(str(eqns[n]))
         f.write("\n")

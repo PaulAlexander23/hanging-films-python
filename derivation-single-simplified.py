@@ -21,7 +21,7 @@ def wibl2TwoDimensionalFallingLiquidFilms():
             + Integer(99)/Integer(16)*(y/h)**5 - Integer(33)/Integer(32)*(y/h)**6)
     g = [g0, g1, g2]
 
-    b0 = Integer(3) / h * q 
+    b0 = Integer(3) / h * (q - epsilon * r - epsilon * s)
 
     u = b0 * g0
 
@@ -33,7 +33,7 @@ def wibl2TwoDimensionalFallingLiquidFilms():
     # From falling liquid films
     xMomentumEquation = (
             epsilon * delta * (diff(u, t) + u * diff(u, x) + v * diff(u, y)) - Integer(2) * epsilon**2 * eta * diff(u, x, 2)
-            - Integer(1) - epsilon**2 * eta * diff(diff(u, x).subs(y, h), x) + epsilon * zeta * diff(h, x) - diff(h, x, 3) 
+            - Integer(1) - epsilon**2 * eta * diff(diff(u, x).subs(y, h), x) + epsilon * zeta * diff(h, x) - epsilon**3 * diff(h, x, 3) 
             ).subs(diff(h, t), - diff(q, x))
 
     # Treat the uyy term as special

@@ -21,9 +21,11 @@ def wibl2TwoDimensionalFallingLiquidFilms():
             + Integer(99)/Integer(16)*(y/h)**5 - Integer(33)/Integer(32)*(y/h)**6)
     g = [g0, g1, g2]
 
-    b0 = Integer(3) / h * q 
+    b0 = Integer(3) / h * (q - epsilon * r - epsilon * s)
+    b1 = Integer(45) / h * epsilon * r
+    b2 = Integer(210) / h * epsilon * s
 
-    u = b0 * g0
+    u = b0 * g0 + b1 * g1 + b2 * g2
 
     # Using the continuity equation
     vy = - diff(u, x)
@@ -33,31 +35,39 @@ def wibl2TwoDimensionalFallingLiquidFilms():
     # From falling liquid films
     xMomentumEquation = (
             epsilon * delta * (diff(u, t) + u * diff(u, x) + v * diff(u, y)) - Integer(2) * epsilon**2 * eta * diff(u, x, 2)
-            - Integer(1) - epsilon**2 * eta * diff(diff(u, x).subs(y, h), x) + epsilon * zeta * diff(h, x) - diff(h, x, 3) 
+            - Integer(1) - epsilon**2 * eta * diff(diff(u, x).subs(y, h), x) + epsilon * zeta * diff(h, x) - epsilon**3 * diff(h, x, 3) 
             ).subs(diff(h, t), - diff(q, x))
 
     # Treat the uyy term as special
-    uyy = epsilon**2 * eta * ((4 * diff(h, x) * diff(u, x) - diff(v, x)) * g0).subs(y, h) - q / h**2
+    uyy = [epsilon**2 * eta * ((4 * diff(h, x) * diff(u, x) - diff(v, x)) * gj).subs(y, h)
+            + integrate(u * diff(gj, y, 2), (y, 0, h)) for gj in g]
 
-    eqn0 = integrate(g0 * xMomentumEquation, (y, 0, h)) - uyy
+    eqn0 = integrate(g0 * xMomentumEquation, (y, 0, h)) - uyy[0]
+    eqn1 = integrate(g1 * xMomentumEquation, (y, 0, h)) - uyy[1]
+    eqn2 = integrate(g2 * xMomentumEquation, (y, 0, h)) - uyy[2]
 
-    solution = list(solve(eqn0, diff(q, t)))
+    solution = list(linsolve([eqn0, eqn1, eqn2], (diff(q, t), diff(r, t), diff(s, t))))
 
-    sol = collect(solution[0].expand(), epsilon)
+    sol = [collect(solution[0][n].expand(), epsilon) for n in range(3)]
 
 #    for n in range(3):
 #        sol[n] = (sol[n].coeff(e, 0) + epsilon * sol[n].coeff(e, 1) + epsilon**2 * sol[n].coeff(e, 2)) + epsilon**3 * sol[n].coeff(e, 3))
 
-    f = open("wibl2FallingLiquidFilmsSimplified.tex","w+")
-    f.write(latex(sol))
+    f = open("wibl2FallingLiquidFilms.tex","w+")
+    for n in range(3):
+        f.write(latex(sol[n]))
+        f.write("\n")
     f.close()
 
-    f = open("wibl2FallingLiquidFilmsSimplified.txt","w+")
-    f.write(str(sol))
+    f = open("wibl2FallingLiquidFilms.txt","w+")
+    for n in range(3):
+        f.write(str(sol[n]))
+        f.write("\n")
     f.close()
 
-    pprint(sol)
-    print()
+    for n in range(3):
+        pprint(sol[n])
+        print()
 
 if __name__=="__main__":
     main()

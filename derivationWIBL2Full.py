@@ -4,10 +4,10 @@ from sympy import *
 
 
 def main():
-    wibl2Simplified()
+    wibl2()
     
 
-def wibl2Simplified():
+def wibl2():
     x, y, z, t = symbols("x y z t")
     h = Function("h")(x, z, t)
     q1 = Function("q1")(x, z, t)
@@ -26,54 +26,63 @@ def wibl2Simplified():
     g = [g0, g1, g2]
 
     b0 = 3 / h * (q1 - r1 - s1)
+    b1 = 45 / h * r1
+    b2 = 210 / h * s1
 
-    u = b0 * g0
+    u = b0 * g0 + b1 * g1 + b2 * g2
 
     c0 = 3 / h * (q2 - r2 - s2)
+    c1 = 45 / h * r2
+    c2 = 210 / h * s2
 
-    w = c0 * g0
+    w = c0 * g0 + c1 * g1 + c2 * g2
 
     vy = - diff(u, x) - diff(w, z)
     v = integrate(vy, y)
 
 
     # Treat the uyy and wyy term as special
-    uyy = [epsilon**2 * ((4 * diff(h, x) * diff(u, x) + diff(h, z) * (diff(u, z) + diff(w, x)) - diff(v, x)) * gj).subs(y, h)
+    uyy = [epsilon**2 * ((Integer(2) * diff(h, x) * (Integer(2) * diff(u, x) + diff(w, z)) + diff(h, z) * (diff(u, z) + diff(w, x)) - diff(v, x)) * gj).subs(y, h)
             + integrate(u * diff(gj, y, 2), (y, 0, h)) for gj in g]
 
-    wyy = [epsilon**2 * ((4 * diff(h, z) * diff(w, z) + diff(h, x) * (diff(u, z) + diff(w, x)) - diff(v, z)) * gj).subs(y, h)
-            + integrate(w * diff(gj, y, 2), (y, 0, h)) for gj in g]
+    wyy = [epsilon**2 * ((Integer(2) * diff(h, z) * (diff(u, x) + Integer(2) * diff(w, z)) + diff(h, x) * (diff(u, z) + diff(w, x)) - diff(v, z)) * gj).subs(y, h)
+            + integrate(u * diff(gj, y, 2), (y, 0, h)) for gj in g]
 
     xMomentumEquation = epsilon * (Re * (diff(u, t) + u * diff(u, x) + v * diff(u, y) + w * diff(u, z))
             - Integer(2) * epsilon**2 * diff(u, x, 2) - epsilon**2 * diff(u, z, 2) - epsilon**2 * diff(diff(w, x), z)
             + Integer(2) * epsilon * cot(theta) * diff(h, x) - C**-1 * epsilon**3 * diff(diff(h, x, 2) + diff(h, z, 2), x) - Integer(2)
-            - epsilon**2 * diff(diff(u, x).subs(y, h), x).subs(diff(h, t), - diff(q1, x) - diff(q2, x)) - epsilon**2 * diff(diff(w, z).subs(y, h), x).subs(diff(h, t), - diff(q1, x) - diff(q2, x)))
+            - epsilon**2 * diff(diff(u, x).subs(y, h), x).subs(diff(h, t), - diff(q1, x) - diff(q2, x)) - epsilon**2 * diff(diff(w, z).subs(y, h), x).subs(diff(h, t), - diff(q1, x) - diff(q2, z)))
 
     zMomentumEquation = epsilon * (Re * (diff(w, t) + w * diff(w, z) + v * diff(w, y) + u * diff(w, x))
             - Integer(2) * epsilon**2 * diff(w, z, 2) - epsilon**2 * diff(w, x, 2) - epsilon**2 * diff(diff(u, z), x)
             + Integer(2) * epsilon * cot(theta) * diff(h, z) - C**-1 * epsilon**3 * diff(diff(h, z, 2) + diff(h, x, 2), z) - Integer(2)
-            - epsilon**2 * diff(diff(w, z).subs(y, h), z).subs(diff(h, t), - diff(q1, x) - diff(q2, x)) - epsilon**2 * diff(diff(u, x).subs(y, h), z).subs(diff(h, t), - diff(q1, x) - diff(q2, x)))
+            - epsilon**2 * diff(diff(w, z).subs(y, h), z).subs(diff(h, t), - diff(q1, x) - diff(q2, x)) - epsilon**2 * diff(diff(u, x).subs(y, h), z).subs(diff(h, t), - diff(q1, x) - diff(q2, z)))
 
     eqn0 = integrate(g0 * xMomentumEquation, (y, 0, h)) - uyy[0]
+    eqn1 = integrate(g1 * xMomentumEquation, (y, 0, h)) - uyy[1]
+    eqn2 = integrate(g2 * xMomentumEquation, (y, 0, h)) - uyy[2]
     eqn3 = integrate(g0 * zMomentumEquation, (y, 0, h)) - wyy[0]
+    eqn4 = integrate(g1 * zMomentumEquation, (y, 0, h)) - wyy[1]
+    eqn5 = integrate(g2 * zMomentumEquation, (y, 0, h)) - wyy[2]
 
-    solution = list(linsolve([eqn0, eqn3], (diff(q1, t), diff(q2, t))))
+    solution = list(linsolve([eqn0, eqn1, eqn2, eqn3, eqn4, eqn5], (diff(q1, t), diff(r1, t), diff(s1, t), diff(q2, t), diff(r2, t), diff(s2, t))))
 
-    sol = [solution[0][n].expand() for n in range(2)]
+    truncation = [2, 1, 1, 2, 1, 1]
+    sol = [series(solution[0][n].expand(), epsilon, 0, truncation[n]) for n in range(6)]
 
-    f = open("wibl2threedimensionalSimplified.tex","w+")
-    for n in range(2):
+    f = open("wibl2threedimensional.tex","w+")
+    for n in range(6):
         f.write(latex(sol[n]))
         f.write("\n")
     f.close()
 
-    f = open("wibl2threedimensionalSimplified.txt","w+")
-    for n in range(2):
+    f = open("wibl2threedimensional.txt","w+")
+    for n in range(6):
         f.write(str(sol[n]))
         f.write("\n")
     f.close()
 
-    for n in range(2):
+    for n in range(6):
         pprint(sol[n])
         print()
 
