@@ -25,8 +25,8 @@ def smallTransverseFlow(strings):
     x, y, z, t = symbols("x y z t")
     h = Function("h")(x, z, t)
 
-    F1 = Function("F1")(x, z, t)
-    F2 = Function("F2")(x, z, t)
+    F1 = Function("F_1")(x, z, t)
+    F2 = Function("F_2")(x, z, t)
 
     theta, Re, C = symbols("theta Re C")
     epsilon = symbols("epsilon")
@@ -34,31 +34,28 @@ def smallTransverseFlow(strings):
     sol = list(map(parse_expr, strings))
 
     F1eqn = series(sol[0].subs(F2, epsilon * F2), epsilon, 0, 1).removeO()
+    F2eqn = series(sol[1].subs(F2, epsilon * F2), epsilon, 0, 1).removeO()
 
-    F2 = 
+    F2exact = solve(F2eqn, F2)
 
-    F2sol = solve(h**2 * F2eqn, F2)
+    pprint(F2exact)
 
-    pprint(F2sol)
-    pprint(F2eqn)
 
-    sol = F1eqn.subs(F2, F2sol[0])
+    #F2exact = - Integer(2)/Integer(3) * cot(theta) * h**3 * diff(h, z) + Integer(1)/(Integer(3) * C) * h**3 * (diff(h, (x, 2)) + diff(h, (z, 2)))
+
+    #sol = F1eqn.subs(F2, F2exact[0])
+    sol = F1eqn
 
     f = open("wibl1STF.tex","w+")
-    for n in range(2):
-        f.write(latex(sol[n]))
-        f.write("\n")
+    f.write(latex(sol))
     f.close()
 
     f = open("wibl1STF.txt","w+")
-    for n in range(2):
-        f.write(str(sol[n]))
-        f.write("\n")
+    f.write(str(sol))
     f.close()
 
-    for n in range(len(sol)):
-        pprint(sol[n])
-        print()
+    pprint(sol)
+    print()
 
 
 if __name__ == "__main__":
