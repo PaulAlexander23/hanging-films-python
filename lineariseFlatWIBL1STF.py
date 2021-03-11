@@ -20,14 +20,15 @@ def main():
 
     ht = - diff(F1, x) - diff(F2, z)
 
-    strings = loadStrings("wibl1-flux-eqs.txt")
+    strings = loadStrings("wibl1STF.txt")
     Ft = list(map(parse_expr, strings))
 
-    eqns = [ht] + Ft
+    eqns = [ht.subs(F2, Ft[1]), Ft[0]]
     numberOfEquations = len(eqns)
 
     for n in range(numberOfEquations):
-        eqns[n] = eqns[n].subs(epsilon, 1)
+        pprint(eqns[n])
+        print()
 
     pert = [(h, Integer(1) + epsilon*htilde),
             (F1, Integer(2)/Integer(3) + epsilon*F1tilde),

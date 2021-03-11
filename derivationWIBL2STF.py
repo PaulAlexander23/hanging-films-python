@@ -8,7 +8,7 @@ def main():
     strings = loadStrings("wibl2threedimensionalSimplified.txt")
 
     smallTransverseFlow(strings)
-    
+
 
 def loadStrings(filename):
     f = open(filename, "r")
@@ -35,15 +35,13 @@ def smallTransverseFlow(strings):
 
     sol = [series(sol[n].subs(q2, epsilon * q2), epsilon, 0, 2).removeO() for n in range(2)]
 
-    
-
-    f = open("wibl2threedimensionalSimplifiedSTF.tex","w+")
+    f = open("wibl2STF.tex","w+")
     for n in range(2):
         f.write(latex(sol[n]))
         f.write("\n")
     f.close()
 
-    f = open("wibl2threedimensionalSimplifiedSTF.txt","w+")
+    f = open("wibl2STF.txt","w+")
     for n in range(2):
         f.write(str(sol[n]))
         f.write("\n")
@@ -52,7 +50,7 @@ def smallTransverseFlow(strings):
     for n in range(len(sol)):
         pprint(sol[n])
         print()
-    
+
 
 if __name__ == "__main__":
     main()

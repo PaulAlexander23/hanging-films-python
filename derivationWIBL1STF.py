@@ -38,20 +38,18 @@ def smallTransverseFlow(strings):
 
     F2exact = solve(F2eqn, F2)
 
-    pprint(F2exact)
-
-
-    #F2exact = - Integer(2)/Integer(3) * cot(theta) * h**3 * diff(h, z) + Integer(1)/(Integer(3) * C) * h**3 * (diff(h, (x, 2)) + diff(h, (z, 2)))
-
-    #sol = F1eqn.subs(F2, F2exact[0])
-    sol = F1eqn
+    sol = [F1eqn, F2exact[0]]
 
     f = open("wibl1STF.tex","w+")
-    f.write(latex(sol))
+    for n in range(2):
+        f.write(latex(sol[n]))
+        f.write("\n")
     f.close()
 
     f = open("wibl1STF.txt","w+")
-    f.write(str(sol))
+    for n in range(2):
+        f.write(str(sol[n]))
+        f.write("\n")
     f.close()
 
     pprint(sol)

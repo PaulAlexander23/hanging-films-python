@@ -40,7 +40,7 @@ def main():
     #for n in range(numberOfEquations):
     #    pprint(eqns[n])
 
-    f = open('linearised-wibl2-flat-latex.tex', 'w+')
+    f = open('linearised-flat-wibl2-latex.tex', 'w+')
     for n in range(numberOfEquations):
         f.write(latex(eqns[n]))
         f.write("\n")
@@ -57,13 +57,13 @@ def main():
         f.write("\n")
     f.close
 
-    f = open('linearised-wibl2-flat.txt', 'w+')
+    f = open('linearised-flat-wibl2.txt', 'w+')
     for n in range(numberOfEquations):
         f.write(str(eqns[n]))
         f.write("\n")
     f.close
 
-    f = open('linearised-wibl2-flat-matrix.txt', 'w+')
+    f = open('linearised-flat-wibl2-matrix.txt', 'w+')
     for n in range(numberOfEquations):
         for var in [hhat, F1hat, F2hat]:
             f.write(str(eqns[n].coeff(var, 1)))

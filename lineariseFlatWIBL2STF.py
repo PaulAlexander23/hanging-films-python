@@ -21,7 +21,7 @@ def main():
     #Ft = wibl2NusseltSimplified(x, y, z, t, h, F1, F2, theta, Re, C)
 
     ht = - diff(F1, x) - diff(F2, z)
-    strings = loadStrings("wibl2threedimensionalSimplified.txt")
+    strings = loadStrings("wibl2STF.txt")
     Ft = parseStrings(strings)
 
     eqns = [ht, Ft[0].subs(e, 1), Ft[1].subs(e, 1)]
@@ -29,7 +29,7 @@ def main():
     numberOfEquations = len(eqns)
 
     for n in range(numberOfEquations):
-        eqns[n] = eqns[n].subs([(h, Integer(1) + e*htilde), (F1, Integer(2)/Integer(3) + e*F1tilde), (F2, e**2*F2tilde)]).doit().expand()
+        eqns[n] = eqns[n].subs([(h, Integer(1) + e*htilde), (F1, Integer(2)/Integer(3) + e*F1tilde), (F2, e*F2tilde)]).doit().expand()
 
     for n in range(numberOfEquations):
         eqns[n] = series(eqns[n], e)
@@ -40,7 +40,7 @@ def main():
     #for n in range(numberOfEquations):
     #    pprint(eqns[n])
 
-    f = open('linearised-wibl2-flat-stf-latex.tex', 'w+')
+    f = open('linearised-flat-wibl2-stf-latex.tex', 'w+')
     for n in range(numberOfEquations):
         f.write(latex(eqns[n]))
         f.write("\n")
@@ -57,13 +57,13 @@ def main():
         f.write("\n")
     f.close
 
-    f = open('linearised-wibl2-flat-stf.txt', 'w+')
+    f = open('linearised-flat-wibl2-stf.txt', 'w+')
     for n in range(numberOfEquations):
         f.write(str(eqns[n]))
         f.write("\n")
     f.close
 
-    f = open('linearised-wibl2-flat-stf-matrix.txt', 'w+')
+    f = open('linearised-flat-wibl2-stf-matrix.txt', 'w+')
     for n in range(numberOfEquations):
         for var in [hhat, F1hat, F2hat]:
             f.write(str(eqns[n].coeff(var, 1)))
