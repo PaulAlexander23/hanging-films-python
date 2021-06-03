@@ -1,6 +1,7 @@
 
 
 from sympy import *
+from saveAndLoadEquation import *
 
 def main():
     x, y, z, t = symbols("x y z t")
@@ -13,21 +14,24 @@ def main():
     P = Function("P")(x, z, t)
     theta, Re, C = symbols("theta Re C")
     epsilon = symbols("epsilon")
-    a, b, omega = symbols("alpha beta omega")
+    delta = symbols("delta")
+    alpha, beta, omega = symbols("alpha beta omega")
 
-    P = Integer(2) * h * cot(theta) - C**-1 * (diff(h, x, 2) + diff(h, z, 2))
-    F1 = Integer(2) / Integer(3) * h**3 - h**3 * diff(P, x) / Integer(3) + Integer(8) / Integer(15) * Re * h**6 * diff(h, x)
-    F2 = - h**3 * diff(P, z) / Integer(3)
-    ht = - diff(F1, x) - diff(F2, z)
+    strings = loadStrings("benney.txt")
+    ht = list(map(parse_expr, strings))
 
-    ht = series(ht.subs(h, hbar + epsilon*htilde).doit(), epsilon, 0)
+    ht = series(ht[0].subs(h, hbar + delta*htilde).doit(), delta, 0)
 
-    httilde = ht.coeff(epsilon, 1)
-
-    hthat = powsimp((httilde.subs(htilde, hhat * exp(I * a * x))
-            / exp(I * a * x)).doit().expand()).expand()
+    httilde = ht.coeff(delta, 1)
 
     f = open('linearised-rivulet-benney-latex.tex', 'w')
+    f.write(latex(httilde))
+    f.close
+
+    hthat = powsimp((httilde.subs(htilde, hhat * exp(I * alpha * x + I * beta * z))
+            / exp(I * alpha * x + I * beta * z)).doit().expand()).expand()
+
+    f = open('linearised-rivulet-benney-exp-latex.tex', 'w')
     f.write(latex(hthat))
     f.close
 

@@ -20,11 +20,12 @@ def main():
     q2hat = Function("q2hat")(z)
     theta, Re, C = symbols("theta Re C")
     epsilon = symbols("epsilon")
-    a, b, omega = symbols("alpha beta omega")
+    delta = symbols("delta")
+    alpha, beta, omega = symbols("alpha beta omega")
 
     ht = - diff(q1, x) - diff(q2, z)
     #Ft = wibl2NusseltSimplified(x, y, z, t, h, q1, q2, theta, Re, C)
-    strings = loadStrings("wibl2threedimensionalSimplifiedSTF.txt")
+    strings = loadStrings("wibl2STF.txt")
     Ft = list(map(parse_expr, strings))
 
     eqns = [ht, Ft[0], Ft[1]]
@@ -32,31 +33,34 @@ def main():
     numberOfEquations = len(eqns)
 
     for n in range(numberOfEquations):
-        eqns[n] = eqns[n].subs(epsilon, 1)
+        eqns[n] = eqns[n].subs([(h, hbar + delta*htilde), (q1, q1bar + delta*q1tilde), (q2, q2bar + delta*q2tilde)]).doit().expand()
 
     for n in range(numberOfEquations):
-        eqns[n] = eqns[n].subs([(h, hbar + epsilon*htilde), (q1, q1bar + epsilon*q1tilde), (q2, q2bar + epsilon*q2tilde)]).doit().expand()
+        eqns[n] = series(eqns[n], delta, 0)
 
     for n in range(numberOfEquations):
-        eqns[n] = series(eqns[n], epsilon)
+        eqns[n] = eqns[n].coeff(delta, 1)
 
-    for n in range(numberOfEquations):
-        eqns[n] = eqns[n].coeff(epsilon, 1)
-
-    for n in range(numberOfEquations):
-        eqns[n] = powsimp((eqns[n].subs(
-        [(htilde, hhat * exp(I * (a * x - omega * t))),
-        (q1tilde, q1hat * exp(I * (a * x - omega * t))),
-        (q2tilde, q2hat * exp(I * (a * x - omega * t)))])
-            / exp(I * (a * x - omega * t))).doit()).expand()
-
-    f = open('linearised-wibl2-stf-latex.tex', 'w+')
+    f = open('linearised-rivulet-wibl2-stf-latex.tex', 'w+')
     for n in range(numberOfEquations):
         f.write(latex(eqns[n]))
         f.write("\n")
     f.close
 
-    f = open('linearised-wibl2-stf.txt', 'w+')
+    for n in range(numberOfEquations):
+        eqns[n] = powsimp((eqns[n].subs(
+        [(htilde, hhat * exp(I * alpha * x + I * beta * z)),
+        (q1tilde, q1hat * exp(I * alpha * x + I * beta * z)),
+        (q2tilde, q2hat * exp(I * alpha * x + I * beta * z))])
+            / exp(I * alpha * x + I * beta * z)).doit()).expand()
+
+    f = open('linearised-rivulet-wibl2-stf-exp-latex.tex', 'w+')
+    for n in range(numberOfEquations):
+        f.write(latex(eqns[n]))
+        f.write("\n")
+    f.close
+
+    f = open('linearised-rivulet-wibl2-stf.txt', 'w+')
     for n in range(numberOfEquations):
         f.write(str(eqns[n]))
         f.write("\n")

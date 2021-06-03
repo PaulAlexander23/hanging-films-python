@@ -14,7 +14,8 @@ def main():
     F2tilde = Function("F2tilde")(x, z)
     hhat, F1hat, F2hat = symbols("hhat F1hat F2hat")
     theta, Re, C = symbols("theta Re C")
-    e = symbols("epsilon")
+    epsilon = symbols("epsilon")
+    delta = symbols("delta")
     a, b, omega = symbols("alpha beta omega")
 
     #ht = - diff(F1, x) - diff(F2, z)
@@ -24,18 +25,17 @@ def main():
     strings = loadStrings("wibl2threedimensionalSimplified.txt")
     Ft = parseStrings(strings)
 
-    eqns = [ht, Ft[0].subs(e, 1), Ft[1].subs(e, 1)]
-
+    eqns = [ht] + Ft
     numberOfEquations = len(eqns)
 
     for n in range(numberOfEquations):
-        eqns[n] = eqns[n].subs([(h, Integer(1) + e*htilde), (F1, Integer(2)/Integer(3) + e*F1tilde), (F2, e*F2tilde)]).doit().expand()
+        eqns[n] = eqns[n].subs([(h, Integer(1) + delta*htilde), (F1, Integer(2)/Integer(3) + delta*F1tilde), (F2, delta*F2tilde)]).doit().expand()
 
     for n in range(numberOfEquations):
-        eqns[n] = series(eqns[n], e)
+        eqns[n] = series(eqns[n], delta)
 
     for n in range(numberOfEquations):
-        eqns[n] = eqns[n].coeff(e, 1)
+        eqns[n] = eqns[n].coeff(delta, 1)
 
     #for n in range(numberOfEquations):
     #    pprint(eqns[n])

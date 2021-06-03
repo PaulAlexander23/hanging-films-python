@@ -16,6 +16,7 @@ def main():
     F2hat = symbols("F2hat")
     theta, Re, C = symbols("theta Re C")
     epsilon = symbols("epsilon")
+    delta = symbols("delta")
     a, b, omega = symbols("alpha beta omega")
 
     ht = - diff(F1, x) - diff(F2, z)
@@ -30,21 +31,15 @@ def main():
         pprint(eqns[n])
         print()
 
-    pert = [(h, Integer(1) + epsilon*htilde),
-            (F1, Integer(2)/Integer(3) + epsilon*F1tilde),
-            (F2, 0 + epsilon*F2tilde)]
+    pert = [(h, Integer(1) + delta*htilde),
+            (F1, Integer(2)/Integer(3) + delta*F1tilde),
+            (F2, 0 + delta*F2tilde)]
 
     for n in range(numberOfEquations):
-        eqns[n] = series(eqns[n].subs(epsilon, 1).subs(pert).doit().expand(), epsilon, 0)
+        eqns[n] = series(eqns[n].subs(delta, 1).subs(pert).doit().expand(), delta, 0)
 
     for n in range(numberOfEquations):
-        eqns[n] = eqns[n].coeff(epsilon, 1)
-
-    f = open('linearised-flat-wibl1-stf-latex.tex', 'w')
-    for n in range(numberOfEquations):
-        f.write(latex(eqns[n]))
-        f.write("\n")
-    f.close()
+        eqns[n] = eqns[n].coeff(delta, 1)
 
     phi = exp(I * (a * x + b * z))
     normalMode = [(htilde, hhat * phi),
@@ -55,7 +50,7 @@ def main():
         eqns[n] = powsimp((eqns[n].subs(normalMode)
             / phi).doit().expand()).expand()
 
-    f = open('linearised-flat-wibl1-stf-exp-latex.tex', 'w')
+    f = open('linearised-flat-wibl1-stf-latex.tex', 'w')
     for n in range(numberOfEquations):
         f.write(latex(eqns[n]))
         f.write("\n")

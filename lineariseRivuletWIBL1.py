@@ -19,7 +19,8 @@ def main():
     F2hat = Function("F2hat")(z)
     theta, Re, C = symbols("theta Re C")
     epsilon = symbols("epsilon")
-    a, b, omega = symbols("alpha beta omega")
+    delta = symbols("delta")
+    alpha, beta, omega = symbols("alpha beta omega")
 
     ht = - diff(F1, x) - diff(F2, z)
 
@@ -29,16 +30,13 @@ def main():
     eqns = [ht] + Ft
     numberOfEquations = len(eqns)
 
-    for n in range(numberOfEquations):
-        eqns[n] = eqns[n].subs(epsilon, 1)
-
-    pert = [(h, hbar + epsilon*htilde), (F1, F1bar + epsilon*F1tilde), (F2, F2bar + epsilon*F2tilde)]
+    pert = [(h, hbar + delta*htilde), (F1, F1bar + delta*F1tilde), (F2, F2bar + delta*F2tilde)]
 
     for n in range(numberOfEquations):
-        eqns[n] = series(eqns[n].subs(pert).doit().expand(), epsilon, 0)
+        eqns[n] = series(eqns[n].subs(pert).doit().expand(), delta, 0)
 
     for n in range(numberOfEquations):
-        eqns[n] = eqns[n].coeff(epsilon, 1)
+        eqns[n] = eqns[n].coeff(delta, 1)
 
     f = open('linearised-rivulet-wibl1-tilde-latex.tex', 'w')
     for n in range(numberOfEquations):
@@ -51,13 +49,13 @@ def main():
         print()
     print()
 
-    normalMode = [(htilde, hhat * exp(I * (a * x - omega * t))),
-        (F1tilde, F1hat * exp(I * (a * x - omega * t))),
-        (F2tilde, F2hat * exp(I * (a * x - omega * t)))]
+    normalMode = [(htilde, hhat * exp(I * alpha * x + I * beta * z)),
+        (F1tilde, F1hat * exp(I * alpha * x + I * beta * z)),
+        (F2tilde, F2hat * exp(I * alpha * x + I * beta * z))]
 
     for n in range(numberOfEquations):
         eqns[n] = powsimp((eqns[n].subs(normalMode)
-            / exp(I * (a * x - omega * t))).doit().expand()).expand()
+            / exp(I * alpha * x + I * beta * z)).doit().expand()).expand()
 
     f = open('linearised-rivulet-wibl1-hat-latex.tex', 'w')
     for n in range(numberOfEquations):

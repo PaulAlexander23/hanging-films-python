@@ -16,6 +16,7 @@ def main():
     F2hat = symbols("F2hat")
     theta, Re, C = symbols("theta Re C")
     epsilon = symbols("epsilon")
+    delta = symbols("delta")
     a, b, omega = symbols("alpha beta omega")
 
     ht = - diff(F1, x) - diff(F2, z)
@@ -26,18 +27,15 @@ def main():
     eqns = [ht] + Ft
     numberOfEquations = len(eqns)
 
-    for n in range(numberOfEquations):
-        eqns[n] = eqns[n].subs(epsilon, 1)
-
-    pert = [(h, Integer(1) + epsilon*htilde),
-            (F1, Integer(2)/Integer(3) + epsilon*F1tilde),
-            (F2, 0 + epsilon*F2tilde)]
+    pert = [(h, Integer(1) + delta*htilde),
+            (F1, Integer(2)/Integer(3) + delta*F1tilde),
+            (F2, 0 + delta*F2tilde)]
 
     for n in range(numberOfEquations):
-        eqns[n] = series(eqns[n].subs(epsilon, 1).subs(pert).doit().expand(), epsilon, 0)
+        eqns[n] = series(eqns[n].subs(delta, 1).subs(pert).doit().expand(), delta, 0)
 
     for n in range(numberOfEquations):
-        eqns[n] = eqns[n].coeff(epsilon, 1)
+        eqns[n] = eqns[n].coeff(delta, 1)
 
     phi = exp(I * (a * x + b * z))
     normalMode = [(htilde, hhat * phi),
