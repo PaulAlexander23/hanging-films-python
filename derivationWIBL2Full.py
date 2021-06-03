@@ -5,7 +5,7 @@ from sympy import *
 
 def main():
     wibl2()
-    
+
 
 def wibl2():
     x, y, z, t = symbols("x y z t")
@@ -18,6 +18,7 @@ def wibl2():
     s2 = Function("s2")(x, z, t)
     theta, Re, C = symbols("theta Re C")
     epsilon = symbols("epsilon")
+    eta1, eta2 = symbols("eta1, eta2")
 
     g0 = (y/h) - (y/h)**2/Integer(2)
     g1 = (y/h) - Integer(17)/Integer(6)*(y/h)**2 + Integer(7)/Integer(3)*(y/h)**3 - Integer(7)/Integer(12)*(y/h)**4
@@ -50,12 +51,12 @@ def wibl2():
 
     xMomentumEquation = epsilon * (Re * (diff(u, t) + u * diff(u, x) + v * diff(u, y) + w * diff(u, z))
             - Integer(2) * epsilon**2 * diff(u, x, 2) - epsilon**2 * diff(u, z, 2) - epsilon**2 * diff(diff(w, x), z)
-            + Integer(2) * epsilon * cot(theta) * diff(h, x) - C**-1 * epsilon**3 * diff(diff(h, x, 2) + diff(h, z, 2), x) - Integer(2)
+            + Integer(2) * epsilon * cot(theta) * diff(h, x) - C**-1 * epsilon**3 * diff(diff(h, x, 2) + diff(h, z, 2), x) - Integer(2) * eta1
             - epsilon**2 * diff(diff(u, x).subs(y, h), x).subs(diff(h, t), - diff(q1, x) - diff(q2, x)) - epsilon**2 * diff(diff(w, z).subs(y, h), x).subs(diff(h, t), - diff(q1, x) - diff(q2, z)))
 
     zMomentumEquation = epsilon * (Re * (diff(w, t) + w * diff(w, z) + v * diff(w, y) + u * diff(w, x))
             - Integer(2) * epsilon**2 * diff(w, z, 2) - epsilon**2 * diff(w, x, 2) - epsilon**2 * diff(diff(u, z), x)
-            + Integer(2) * epsilon * cot(theta) * diff(h, z) - C**-1 * epsilon**3 * diff(diff(h, z, 2) + diff(h, x, 2), z) - Integer(2)
+            + Integer(2) * epsilon * cot(theta) * diff(h, z) - C**-1 * epsilon**3 * diff(diff(h, z, 2) + diff(h, x, 2), z) - Integer(2) * eta2
             - epsilon**2 * diff(diff(w, z).subs(y, h), z).subs(diff(h, t), - diff(q1, x) - diff(q2, x)) - epsilon**2 * diff(diff(u, x).subs(y, h), z).subs(diff(h, t), - diff(q1, x) - diff(q2, z)))
 
     eqn0 = integrate(g0 * xMomentumEquation, (y, 0, h)) - uyy[0]
@@ -69,6 +70,8 @@ def wibl2():
 
     truncation = [2, 1, 1, 2, 1, 1]
     sol = [series(solution[0][n].expand(), epsilon, 0, truncation[n]) for n in range(6)]
+
+    sol = [expand(sol[n].subs(diff(h,t),-diff(q1,x)-diff(q2,z))) for n in range(6)]
 
     f = open("wibl2threedimensional.tex","w+")
     for n in range(6):
